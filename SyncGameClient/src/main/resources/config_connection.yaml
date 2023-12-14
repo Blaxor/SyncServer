@@ -1,0 +1,5 @@
+port-server: 8020
+ip-server: localhost
+id: 000-000-000-000
+temp_folder: /client/temp/
+size_batch: 1048576

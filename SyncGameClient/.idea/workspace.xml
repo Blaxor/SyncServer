@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d49c6dbb-5e02-4fe9-8714-acf3835858dc" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ro/deiutzentartainment/Main.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ro/deiutzentartainment/config/Config.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ro/deiutzentartainment/config/ConfigConnection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ro/deiutzentartainment/config/ConfigFiles.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ro/deiutzentartainment/connection/ArchiveHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ro/deiutzentartainment/connection/RequestHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ro/deiutzentartainment/games/GameHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ro/deiutzentartainment/games/GameHandlerImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ro/deiutzentartainment/games/data/Game.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ro/deiutzentartainment/games/data/GameImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ro/deiutzentartainment/grpc/api/Api.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ro/deiutzentartainment/grpc/api/gameGrpc.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ro/deiutzentartainment/utils/ProgramDirectoryUtilities.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/config_connection.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/proto/api.proto" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SyncGameServer/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SyncGameServer/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SyncGameServer/src/main/java/ro/deiutzentartainment/APIImplementation.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SyncGameServer/src/main/java/ro/deiutzentartainment/Main.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SyncGameServer/src/main/java/ro/deiutzentartainment/config/Config.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SyncGameServer/src/main/java/ro/deiutzentartainment/config/ConfigFile.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SyncGameServer/src/main/java/ro/deiutzentartainment/config/ConfigFiles.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SyncGameServer/src/main/java/ro/deiutzentartainment/file/FileUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SyncGameServer/src/main/java/ro/deiutzentartainment/grpc/api/Api.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SyncGameServer/src/main/java/ro/deiutzentartainment/grpc/api/gameGrpc.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SyncGameServer/src/main/resources/config.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SyncGameServer/src/main/resources/proto/api.proto" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SyncServer.iml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="2ZOkSepBpaYZvEH5is8mYLOWS19" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "C:/Users/Deiu/Desktop/SyncServer/SyncGameClient"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d49c6dbb-5e02-4fe9-8714-acf3835858dc" name="Changes" comment="" />
+      <created>1702300514029</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1702300514029</updated>
+    </task>
+    <servers />
+  </component>
+</project>

@@ -1,0 +1,137 @@
+package ro.deiutzentartainment.connection.handler;
+
+import lombok.SneakyThrows;
+import ro.deiutzentartainment.config.ConfigFile;
+import ro.deiutzentartainment.connection.ConnectionManager;
+import ro.deiutzentartainment.fileutils.communication.Files;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class PutGameConnectionHandler implements ConnectionHandler{
+
+    Socket socket;
+    ConnectionManager connectionManager;
+
+
+    private UUID uuid;
+
+    String gameName;
+
+    private File folderTemp;
+
+    private DataInputStream reader;
+    private DataOutputStream writer;
+
+
+
+
+    public PutGameConnectionHandler(ConnectionManager connectionManager, Socket socket,DataInputStream reader, DataOutputStream writer, UUID uuid) {
+        this.socket=socket;
+        this.connectionManager=connectionManager;
+        this.uuid =uuid;
+        this.reader = reader;
+        this.writer =writer;
+    }
+    @Override
+    public void Start() {
+
+        generateTempFolder();
+        try {
+            gameName = readGameName(reader);
+                if(sendIsLocalModificationNewer()){
+                    System.out.println("Local is newer. Stopping process");
+                    return;
+                }else{
+                    System.out.println("Local is older. Updating local...");
+                }
+                readPackets(reader);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "FAILED");
+            }finally {
+            Stop();
+            }
+
+
+    }
+
+    @Override
+    public void Stop() {
+        System.out.println("Closing PutGameConnectionHandler");
+        deleteTempFolder();
+        connectionManager.getConnections().remove(uuid);
+        try {
+            socket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    boolean isLocalModificationNewer() throws IOException {
+        long clientEpoch = reader.readLong();
+        long localEpoch = generateSaveLocation(gameName).lastModified();
+        System.out.println("Client epoch " + clientEpoch+ "| Local Epoch " + localEpoch );
+        return localEpoch > clientEpoch;
+    }
+    boolean sendIsLocalModificationNewer() throws IOException {
+        boolean isLocalNewer = isLocalModificationNewer();
+        writer.writeBoolean(isLocalNewer);
+        writer.flush();
+        return isLocalNewer;
+    }
+    @Override
+    public UUID getUUID() {
+        return uuid;
+    }
+
+    @Override
+    public void setTempFolder(File temp) {
+        this.folderTemp= temp;
+    }
+
+    @Override
+    public File getTempFolder() {
+        return folderTemp;
+    }
+
+    @SneakyThrows
+    public String readGameName(DataInputStream inputStream){
+        System.out.println("Waiting for game name");
+        return inputStream.readUTF();
+    }
+
+    public void readPackets(DataInputStream inputStream){
+
+        try {
+            Files.receiveFile(inputStream,16*1024,generateSaveLocation(gameName));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private File generateSaveLocation(String gameName) {
+        File folderSave = ConfigFile.instance().getSaveGameFolder();
+        if(!folderSave.exists())
+            folderSave.mkdirs();
+        return new File(folderSave,gameName+".zip");
+
+
+    }
+
+}
+//TODO ORDER PACKETS ->
+// 1. Request Data (number of splits, type of request, Game name, verifyIntegrityNumber)
+// 2...... splits; -> Split { Number of split, data (max 5mb) }
+
+
+
+

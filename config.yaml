@@ -1,0 +1,3 @@
+listener-port: 8020
+temp-folder: '/test/server/temp/'
+save-folder: '/test/server/saveGames/'
