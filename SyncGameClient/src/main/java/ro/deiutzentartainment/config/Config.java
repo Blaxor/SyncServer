@@ -6,7 +6,8 @@ public enum Config {
     IP_ADDRESS(ConfigFiles.CONFIG_CONNECTION,"ip-server","192.168.1.132"),
     ID_CLIENT(ConfigFiles.CONFIG_CONNECTION,"id","0000-0000-0000-0000"),
     TEMP_FOLDER(ConfigFiles.CONFIG_CONNECTION,"temp_folder","/client/temp/"),
-    BATCH_SIZE(ConfigFiles.CONFIG_CONNECTION,"size_batch","1048576");
+    BATCH_SIZE(ConfigFiles.CONFIG_CONNECTION,"size_batch","1048576"),
+    CHECK_SIZE(ConfigFiles.CONFIG_CONNECTION,"check_size","True");
 
 
 

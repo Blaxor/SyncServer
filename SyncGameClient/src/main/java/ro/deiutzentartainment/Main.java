@@ -16,7 +16,7 @@ public class Main {
 
         configConnection = new ConfigConnection();
         GameHandlerImpl gameHandler = new GameHandlerImpl(configConnection);
-
+        gameHandler.saveGame(SavePathGame.SPACE_ENGINEERS.generateGame());
 
     }
 

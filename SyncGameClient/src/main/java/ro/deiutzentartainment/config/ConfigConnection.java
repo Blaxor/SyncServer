@@ -42,4 +42,7 @@ public class ConfigConnection {
         }
         return obj;
     }
+    public boolean getBoolean(Config config){
+        return (boolean) getConfig(config);
+    }
 }

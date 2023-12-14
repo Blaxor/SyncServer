@@ -1,8 +1,12 @@
 package ro.deiutzentartainment.connection;
 
 import net.lingala.zip4j.exception.ZipException;
-import ro.deiutzentartainment.fileutils.zip.FileUtils;
-import ro.deiutzentartainment.fileutils.communication.Files;
+
+import ro.deiutzblaxo.cloud.fileutils.communication.Files;
+import ro.deiutzblaxo.cloud.fileutils.zip.ArchiveHandler;
+import ro.deiutzblaxo.cloud.fileutils.zip.FileUtils;
+import ro.deiutzentartainment.config.Config;
+import ro.deiutzentartainment.config.ConfigConnection;
 import ro.deiutzentartainment.games.data.Game;
 
 import java.io.*;
@@ -36,6 +40,7 @@ public class PutGameRequestsHandler implements Handler{
             sendGameName(output);
 
             sendLastModificationTime(new File(game.getSavePath()));
+
             if(getConfirmationLocalIsOlder()) {
                 System.out.println("Local is Older. Stopping process");
                 return;
@@ -44,7 +49,16 @@ public class PutGameRequestsHandler implements Handler{
             }
             generateTempFolder();
             createTempFile();
-            sendPackets(output);
+            if(isClientBigger()) {
+                System.out.println("Client size is bigger,saving .");
+                sendPackets(output);
+            }
+            else {
+                System.out.println("Client size is not bigger, not saving");
+            }
+
+
+
             FileUtils.delete(new File(getZipTempPath()));
 
         }catch (FileNotFoundException nf){
@@ -55,13 +69,21 @@ public class PutGameRequestsHandler implements Handler{
             System.out.println("STOP PutGameRequestHandler");
             Stop();
         }
-
-
     }
+    private boolean isClientBigger() throws IOException {
+        if(ConfigConnection.getInstance().getBoolean(Config.CHECK_SIZE)){
+            long size = new File(getZipTempPath()).length();
+            output.writeLong(size);
+            output.flush();
+            return input.readBoolean();
+        }
+        return true;
+    }
+
 
     private void createTempFile() throws ZipException, FileNotFoundException {
         System.out.println("Creating zip file");
-        FileUtils.ArchiveHandler.zip(game.getSavePath(),getZipTempPath());
+        ArchiveHandler.zip(game.getSavePath(),getZipTempPath());
         System.out.println("Finished creating zip file");
     }
     public void sendLastModificationTime(File file) throws IOException {

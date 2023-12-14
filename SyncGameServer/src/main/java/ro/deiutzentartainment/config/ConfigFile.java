@@ -1,9 +1,9 @@
 package ro.deiutzentartainment.config;
 
 import org.apache.commons.io.FileUtils;
+import ro.deiutzblaxo.cloud.fileutils.ProgramDirectoryUtilities;
 import ro.deiutzblaxo.cloud.yaml.YAMLFile;
 import ro.deiutzblaxo.cloud.yaml.YAMLFileImpl;
-import ro.deiutzentartainment.fileutils.ProgramDirectoryUtilities;
 
 
 import java.io.File;
@@ -43,6 +43,9 @@ public class ConfigFile {
             return config._default;
         }
         return obj;
+    }
+    public boolean getBoolean(Config config){
+        return (boolean) getConfig(config);
     }
     public File getTempFolder(){
         File folder = new File(ProgramDirectoryUtilities.getProgramDirectory()+getConfig(Config.TEMP_FOLDER));

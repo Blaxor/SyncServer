@@ -1,9 +1,10 @@
 package ro.deiutzentartainment.connection.handler;
 
 import lombok.SneakyThrows;
+import ro.deiutzblaxo.cloud.fileutils.communication.Files;
+import ro.deiutzentartainment.config.Config;
 import ro.deiutzentartainment.config.ConfigFile;
 import ro.deiutzentartainment.connection.ConnectionManager;
-import ro.deiutzentartainment.fileutils.communication.Files;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -49,9 +50,22 @@ public class PutGameConnectionHandler implements ConnectionHandler{
                     System.out.println("Local is newer. Stopping process");
                     return;
                 }else{
-                    System.out.println("Local is older. Updating local...");
+                    System.out.println("Local is older. Continue");
                 }
+
+            if(isClientBigger()) {
+                writer.writeBoolean(true);
+                writer.flush();
+                System.out.println("Client size is bigger, saving the client size.");
                 readPackets(reader);
+            }
+            else {
+                writer.writeBoolean(false);
+                writer.flush();
+                System.out.println("Client size is not bigger, not saving");
+            }
+
+
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -61,6 +75,17 @@ public class PutGameConnectionHandler implements ConnectionHandler{
             }
 
 
+    }
+
+    private boolean isClientBigger() throws IOException {
+        if(ConfigFile.instance().getBoolean(Config.CHECK_SIZE)){
+
+            Long clientSize = reader.readLong();
+            Long localsize = getSaveFile(gameName,true).length();
+            System.out.println(clientSize +" <- client | local -> " + localsize);
+            return clientSize >= localsize;
+        }
+        return false;
     }
 
     @Override

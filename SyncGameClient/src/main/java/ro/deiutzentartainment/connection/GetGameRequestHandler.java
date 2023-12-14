@@ -2,14 +2,14 @@ package ro.deiutzentartainment.connection;
 
 import com.google.gson.Gson;
 import net.lingala.zip4j.exception.ZipException;
-import ro.deiutzentartainment.fileutils.zip.FileUtils;
-import ro.deiutzentartainment.fileutils.communication.Files;
+import ro.deiutzblaxo.cloud.fileutils.communication.Files;
+import ro.deiutzblaxo.cloud.fileutils.zip.ArchiveHandler;
+import ro.deiutzblaxo.cloud.fileutils.zip.FileUtils;
+import ro.deiutzentartainment.config.Config;
+import ro.deiutzentartainment.config.ConfigConnection;
 import ro.deiutzentartainment.games.data.Game;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 
 //TODO NEW ORDER OF REQUESTS -> NAME_GAME(HEAD??) -> PACKETS(ReadFileInBatch.class) -> FINAL PACKET(ReadFileInBatch.class) -> CONFIRMATION DOWNLOAD
@@ -38,24 +38,40 @@ public class GetGameRequestHandler implements Handler {
     @Override
     public void Start() {
         try {
-            //INITIALIZATION(INT), GameName(UTF), (data.....) bytes
 
             sendGameName(printWriter);
             generateTempFolder();
-            receiveAllThePackets(bufferedReader);
-            unzipToFile();
-            FileUtils.delete(new File(getZipTempPath()));
+            if(isClientBigger()) {
+                System.out.println("Client size is bigger, not saving.");
+            }
+            else {
+                System.out.println("Client size is not bigger, saving");
+                receiveAllThePackets(bufferedReader);
+                unzipToFile();
+                FileUtils.delete(new File(getZipTempPath()));
+            }
+
+
         }catch (Exception e){
             e.printStackTrace();
         }finally {
             Stop();
         }
     }
+    private boolean isClientBigger() throws IOException {
+        if(ConfigConnection.getInstance().getBoolean(Config.CHECK_SIZE)){
+            long size = getZipSize();
+            printWriter.writeLong(size);
+            printWriter.flush();
+            return bufferedReader.readBoolean();
+        }
+        return false;
+    }
 
     private void unzipToFile() {
         try {
             System.out.println("Unzipping the game save " + game.getName() );
-            FileUtils.ArchiveHandler.unzip(getZipTempPath(),game.getSavePath());
+            ArchiveHandler.unzip(getZipTempPath(),game.getSavePath());
             System.out.println("Done unzipping the game save " + game.getName() );
         } catch (ZipException e) {
             e.printStackTrace();
@@ -86,6 +102,19 @@ public class GetGameRequestHandler implements Handler {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+    }
+    private long getZipSize() throws ZipException, FileNotFoundException {
+        System.out.println("Creating zip file");
+        File saveFile = new File(game.getSavePath());
+        if(!saveFile.exists()) {
+            System.out.println("Save file do not exist. Size is 0 then.");
+            return 0;
+        }
+
+        ArchiveHandler.zip(game.getSavePath(),getZipTempPath());
+        System.out.println("Size of the zip is:  " + new File(getZipTempPath()).length());
+        return new File(getZipTempPath()).length();
 
     }
 

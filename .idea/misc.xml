@@ -7,10 +7,11 @@
         <option value="$PROJECT_DIR$/SyncGameServer/pom.xml" />
         <option value="$PROJECT_DIR$/SyncGameClient/pom.xml" />
         <option value="$PROJECT_DIR$/FileHandler/pom.xml" />
+        <option value="$PROJECT_DIR$/GUIClient/pom.xml" />
       </list>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_17_PREVIEW" project-jdk-name="corretto-17" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" project-jdk-name="corretto-17" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

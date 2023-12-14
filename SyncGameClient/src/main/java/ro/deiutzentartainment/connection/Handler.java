@@ -1,8 +1,9 @@
 package ro.deiutzentartainment.connection;
 
+import ro.deiutzblaxo.cloud.fileutils.ProgramDirectoryUtilities;
 import ro.deiutzentartainment.config.Config;
 import ro.deiutzentartainment.config.ConfigConnection;
-import ro.deiutzentartainment.fileutils.ProgramDirectoryUtilities;
+
 import ro.deiutzentartainment.games.data.Game;
 
 import java.io.File;

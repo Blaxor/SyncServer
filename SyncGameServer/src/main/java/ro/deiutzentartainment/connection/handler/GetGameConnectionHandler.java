@@ -2,13 +2,14 @@ package ro.deiutzentartainment.connection.handler;
 
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
+import ro.deiutzblaxo.cloud.fileutils.communication.Files;
+import ro.deiutzentartainment.config.Config;
+import ro.deiutzentartainment.config.ConfigFile;
 import ro.deiutzentartainment.connection.ConnectionManager;
 
-import ro.deiutzentartainment.fileutils.communication.Files;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.UUID;
 
 public class GetGameConnectionHandler implements ConnectionHandler {
@@ -38,10 +39,18 @@ public class GetGameConnectionHandler implements ConnectionHandler {
                     gameName = readGameName(reader);
                     generateTempFolder();
                     File file = getSaveFile(gameName, false);
-                    sendAllThePackets(writer,file);
-                    while(!socket.isClosed()){
-
+                    if(isClientBigger()) {
+                        System.out.println("Client size is bigger, not sending the game");
+                        writer.writeBoolean(true);
+                        writer.flush();
                     }
+                    else {
+                        System.out.println("Client size is not bigger, sending the game");
+                        writer.writeBoolean(false);
+                        writer.flush();
+                        sendAllThePackets(writer, file);
+                    }
+
 
                 }catch (Exception e){
                     e.printStackTrace();
@@ -55,6 +64,17 @@ public class GetGameConnectionHandler implements ConnectionHandler {
     @SneakyThrows
     private String readGameName(DataInputStream reader){
         return reader.readUTF();
+    }
+
+    private boolean isClientBigger() throws IOException {
+        if(ConfigFile.instance().getBoolean(Config.CHECK_SIZE)){
+            Long clientSize = reader.readLong();
+            Long localsize = getSaveFile(gameName,false).length();
+            System.out.println(clientSize +" <- client | local -> " + localsize);
+
+            return clientSize >= localsize;
+        }
+        return false;
     }
 
     @SneakyThrows

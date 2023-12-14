@@ -4,7 +4,8 @@ public enum Config {
 
     PORT(ConfigFiles.CONFIG,"listener-port",8020),
     SAVE_GAME_FOLDER(ConfigFiles.CONFIG,"save-folder","/saveGames/"),
-    TEMP_FOLDER(ConfigFiles.CONFIG,"temp-folder","/temp/");
+    TEMP_FOLDER(ConfigFiles.CONFIG,"temp-folder","/temp/"),
+    CHECK_SIZE(ConfigFiles.CONFIG,"check_size","true");
     public final ConfigFiles file;
     public final String field;
     public final Object _default;
