@@ -37,6 +37,7 @@ public interface ConnectionHandler {
             FileUtils.delete(getTempFolder());
         }
     }
+    int getPacketSize();
 
 
 

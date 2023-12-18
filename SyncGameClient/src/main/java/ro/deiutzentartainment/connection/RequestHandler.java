@@ -2,6 +2,8 @@ package ro.deiutzentartainment.connection;
 
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
+import ro.deiutzentartainment.connection.handler.GetGameRequestHandler;
+import ro.deiutzentartainment.connection.handler.PutGameRequestsHandler;
 import ro.deiutzentartainment.games.data.Game;
 
 import java.io.*;
@@ -10,9 +12,6 @@ import java.net.Socket;
 public class RequestHandler {
     private final String hostname;
     private final int port;
-    private static int size_packet = 1024*1024; // (200mb)
-    Gson gson= new Gson();
-
 
     public RequestHandler(String hostname, int port){
         this.hostname=hostname;
@@ -30,11 +29,6 @@ public class RequestHandler {
 
 
     }
-    public void sendInitializationPacket(DataOutputStream printWriter, int id) throws IOException {
-        printWriter.writeInt(id);
-        printWriter.flush();
-
-    }
     @SneakyThrows
     public boolean putGameSave(Game game){
         Socket socket = new Socket(hostname,port);
@@ -44,5 +38,10 @@ public class RequestHandler {
         PutGameRequestsHandler gameRequestHandler = new PutGameRequestsHandler(game,socket,writer,reader);
         gameRequestHandler.Start();
         return false;
+    }
+    private void sendInitializationPacket(DataOutputStream printWriter, int id) throws IOException {
+        printWriter.writeInt(id);
+        printWriter.flush();
+
     }
 }

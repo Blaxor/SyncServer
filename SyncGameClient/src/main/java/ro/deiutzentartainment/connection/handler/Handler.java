@@ -1,4 +1,4 @@
-package ro.deiutzentartainment.connection;
+package ro.deiutzentartainment.connection.handler;
 
 import ro.deiutzblaxo.cloud.fileutils.ProgramDirectoryUtilities;
 import ro.deiutzentartainment.config.Config;
@@ -31,5 +31,6 @@ public interface Handler {
     void setTempFolder(File file);
 
     Game getGame();
+    int getPacketSize();
 
 }

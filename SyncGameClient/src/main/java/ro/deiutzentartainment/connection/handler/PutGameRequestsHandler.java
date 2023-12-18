@@ -1,4 +1,4 @@
-package ro.deiutzentartainment.connection;
+package ro.deiutzentartainment.connection.handler;
 
 import net.lingala.zip4j.exception.ZipException;
 
@@ -7,6 +7,8 @@ import ro.deiutzblaxo.cloud.fileutils.zip.ArchiveHandler;
 import ro.deiutzblaxo.cloud.fileutils.zip.FileUtils;
 import ro.deiutzentartainment.config.Config;
 import ro.deiutzentartainment.config.ConfigConnection;
+import ro.deiutzentartainment.config.ConfigFiles;
+import ro.deiutzentartainment.connection.handler.Handler;
 import ro.deiutzentartainment.games.data.Game;
 
 import java.io.*;
@@ -14,7 +16,7 @@ import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-public class PutGameRequestsHandler implements Handler{
+public class PutGameRequestsHandler implements Handler {
 
 
 
@@ -28,11 +30,13 @@ public class PutGameRequestsHandler implements Handler{
 
     static String dataExtension = ".zip";
 
+    static int packet_size = 1024;
     public PutGameRequestsHandler(Game game, Socket socket, DataOutputStream output, DataInputStream input){
         this.socket=socket;
         this.game=game;
         this.input=input;
         this.output=output;
+        this. packet_size= (int)ConfigConnection.getInstance().getConfig(Config.BATCH_SIZE);
     }
     @Override
     public void Start() {
@@ -106,7 +110,7 @@ public class PutGameRequestsHandler implements Handler{
     }
 
     public void sendPackets(DataOutputStream output) throws IOException {
-        Files.sendFile(output,new File(getZipTempPath()),16*1024);
+        Files.sendFile(output,new File(getZipTempPath()),getPacketSize());
         output.flush();
         output.close();
     }
@@ -138,5 +142,10 @@ tempFolder = file;
     @Override
     public Game getGame() {
         return null;
+    }
+
+    @Override
+    public int getPacketSize() {
+        return packet_size;
     }
 }

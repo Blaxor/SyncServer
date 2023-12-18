@@ -30,6 +30,9 @@ public class PutGameConnectionHandler implements ConnectionHandler{
     private DataInputStream reader;
     private DataOutputStream writer;
 
+    private static int size_packet = 1024*1024*200; // (200mb)
+
+
 
 
 
@@ -39,6 +42,7 @@ public class PutGameConnectionHandler implements ConnectionHandler{
         this.uuid =uuid;
         this.reader = reader;
         this.writer =writer;
+        size_packet  = (int) ConfigFile.instance().getConfig(Config.PACKET_SIZE);
     }
     @Override
     public void Start() {
@@ -127,6 +131,11 @@ public class PutGameConnectionHandler implements ConnectionHandler{
         return folderTemp;
     }
 
+    @Override
+    public int getPacketSize() {
+        return size_packet;
+    }
+
     @SneakyThrows
     public String readGameName(DataInputStream inputStream){
         System.out.println("Waiting for game name");
@@ -136,7 +145,7 @@ public class PutGameConnectionHandler implements ConnectionHandler{
     public void readPackets(DataInputStream inputStream){
 
         try {
-            Files.receiveFile(inputStream,16*1024,generateSaveLocation(gameName));
+            Files.receiveFile(inputStream,getPacketSize(),generateSaveLocation(gameName));
         } catch (Exception e) {
             e.printStackTrace();
         }

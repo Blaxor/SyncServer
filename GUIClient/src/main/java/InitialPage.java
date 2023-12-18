@@ -1,30 +1,44 @@
+import ro.deiutzentartainment.games.data.Game;
 import ro.deiutzentartainment.games.data.SavePathGame;
 
 import javax.swing.*;
-import javax.swing.plaf.ComponentUI;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class InitialPage extends JFrame {
-    private JList list1;
+
+    private JPanel GamePanel1;
+    private JPanel GameView;
+    private JScrollPane GameViewScroll;
+    private JLabel GameName;
+    private JLabel IconGame;
 
     public InitialPage(){
 
+        Game game = SavePathGame.TEST_GAME.generateGame();
+
+
         setTitle("SyncGame");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(300,200);
+        setSize(500,500);
         setLocationRelativeTo(null);
         setVisible(true);
+        GameView = new JPanel();
+        add(GameView);
+        GameViewScroll = new JScrollPane();
+        GameViewScroll.setVisible(true);
+        GameView.add(GameViewScroll);
+        GamePanel1 = new JPanel();
+        GamePanel1.setVisible(true);
 
-        List<String> string = new ArrayList<String>();
-        for (SavePathGame value : SavePathGame.values()) {
-            string.add(value.name + "        " + value.defaultPath);
-        }
-        list1 = new JList<>(string.toArray());
+        GameViewScroll.add(GamePanel1);
+        GameName = new JLabel();
+        GameName.setVisible(true);
+        GameName.setText(game.getName());
+        GamePanel1.add(GameName);
 
-        this.add(list1);
-        list1.show();
+
+
+
+
 
 
 
@@ -36,4 +50,7 @@ public class InitialPage extends JFrame {
     }
 
 
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+    }
 }

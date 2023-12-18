@@ -2,6 +2,8 @@ package ro.deiutzentartainment.games.data;
 
 import ro.deiutzentartainment.games.GameHandlerImpl;
 
+import java.awt.image.BufferedImage;
+
 public class GameImpl implements Game{
 
     String name,path;
@@ -18,6 +20,11 @@ public class GameImpl implements Game{
     @Override
     public String getSavePath() {
         return path;
+    }
+
+    @Override
+    public BufferedImage getImage() {
+        return null;
     }
 
     @Override

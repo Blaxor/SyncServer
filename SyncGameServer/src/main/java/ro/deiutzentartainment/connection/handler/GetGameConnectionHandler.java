@@ -20,7 +20,6 @@ public class GetGameConnectionHandler implements ConnectionHandler {
     UUID uuid;
     private File tempfile;
     private static int size_packet = 1024*1024*200; // (200mb)
-    static Gson gson = new Gson();
     String gameName;
 
     public GetGameConnectionHandler(ConnectionManager connectionHandler, Socket socket, DataInputStream reader, DataOutputStream writer, UUID uuid) {
@@ -29,6 +28,7 @@ public class GetGameConnectionHandler implements ConnectionHandler {
     this.reader=reader;
     this.writer=writer;
     this.uuid=uuid;
+    size_packet = (int) ConfigFile.instance().getConfig(Config.PACKET_SIZE);
     }
 //TODO             //INITIALIZATION(INT), GameName(UTF), (data.....) bytes
     @SneakyThrows
@@ -79,7 +79,7 @@ public class GetGameConnectionHandler implements ConnectionHandler {
 
     @SneakyThrows
     public void sendAllThePackets(DataOutputStream stream, File file){
-        Files.sendFile(stream,file,16*1024);
+        Files.sendFile(stream,file,getPacketSize());
         stream.flush();
         stream.close();
     }
@@ -111,6 +111,11 @@ public class GetGameConnectionHandler implements ConnectionHandler {
     @Override
     public File getTempFolder() {
 return tempfile;
+    }
+
+    @Override
+    public int getPacketSize() {
+        return size_packet;
     }
 
 

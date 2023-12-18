@@ -1,4 +1,4 @@
-package ro.deiutzentartainment.connection;
+package ro.deiutzentartainment.connection.handler;
 
 import com.google.gson.Gson;
 import net.lingala.zip4j.exception.ZipException;
@@ -25,13 +25,14 @@ public class GetGameRequestHandler implements Handler {
     private static Gson gson = new Gson();
     private File tempFolder;
     String dataExtension = ".zip";
-
+    static int packet_size = 1024;
 
     public GetGameRequestHandler(Game game, Socket socket,  DataInputStream bufferedReader, DataOutputStream printWriter){
         this.game=game;
         this.socket=socket;
         this.bufferedReader=bufferedReader;
         this.printWriter=printWriter;
+        this.packet_size= (int) ConfigConnection.getInstance().getConfig(Config.BATCH_SIZE);
     }
 
 
@@ -80,7 +81,7 @@ public class GetGameRequestHandler implements Handler {
 
     private void receiveAllThePackets(DataInputStream bufferedReader) {
         try {
-            Files.receiveFile(bufferedReader,16*1024,new File(getZipTempPath()));
+            Files.receiveFile(bufferedReader,getPacketSize(),new File(getZipTempPath()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -133,7 +134,10 @@ tempFolder = file;
         return game;
     }
 
-
+    @Override
+    public int getPacketSize() {
+        return packet_size;
+    }
 
 
 }
