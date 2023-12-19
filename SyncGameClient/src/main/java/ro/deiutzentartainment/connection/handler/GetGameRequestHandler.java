@@ -43,10 +43,10 @@ public class GetGameRequestHandler implements Handler {
             sendGameName(printWriter);
             generateTempFolder();
             if(isClientBigger()) {
-                System.out.println("Client size is bigger, not saving.");
+                System.out.println("Client size is bigger, not loading the cloud sync game save.");
             }
             else {
-                System.out.println("Client size is not bigger, saving");
+                System.out.println("Client size is not bigger, loading the cloud sync game save");
                 receiveAllThePackets(bufferedReader);
                 unzipToFile();
                 FileUtils.delete(new File(getZipTempPath()));
@@ -72,6 +72,8 @@ public class GetGameRequestHandler implements Handler {
     private void unzipToFile() {
         try {
             System.out.println("Unzipping the game save " + game.getName() );
+            if(new File(game.getSavePath()).exists())
+                FileUtils.delete(new File(game.getSavePath()));
             ArchiveHandler.unzip(getZipTempPath(),game.getSavePath());
             System.out.println("Done unzipping the game save " + game.getName() );
         } catch (ZipException e) {

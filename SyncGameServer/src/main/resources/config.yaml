@@ -5,3 +5,4 @@ save-folder: '/saveGames/'
 check_size: true
 #Packet's size:
 size_batch: 1048576
+threshold_check_size: 1000000

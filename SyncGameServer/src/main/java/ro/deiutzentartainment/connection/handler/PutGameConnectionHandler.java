@@ -2,6 +2,7 @@ package ro.deiutzentartainment.connection.handler;
 
 import lombok.SneakyThrows;
 import ro.deiutzblaxo.cloud.fileutils.communication.Files;
+import ro.deiutzblaxo.cloud.fileutils.zip.FileUtils;
 import ro.deiutzentartainment.config.Config;
 import ro.deiutzentartainment.config.ConfigFile;
 import ro.deiutzentartainment.connection.ConnectionManager;
@@ -89,7 +90,7 @@ public class PutGameConnectionHandler implements ConnectionHandler{
             System.out.println(clientSize +" <- client | local -> " + localsize);
             return clientSize >= localsize;
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -146,6 +147,9 @@ public class PutGameConnectionHandler implements ConnectionHandler{
 
         try {
             Files.receiveFile(inputStream,getPacketSize(),generateSaveLocation(gameName));
+            if(generateSaveLocation(gameName).exists()){
+                FileUtils.delete(generateSaveLocation(gameName));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

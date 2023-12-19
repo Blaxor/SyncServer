@@ -13,6 +13,8 @@ public class RequestHandler {
     private final String hostname;
     private final int port;
 
+    private boolean checkSize = true;
+
     public RequestHandler(String hostname, int port){
         this.hostname=hostname;
         this.port=port;
@@ -39,7 +41,11 @@ public class RequestHandler {
         gameRequestHandler.Start();
         return false;
     }
+    public void setCheckSize(boolean val){
+        this.checkSize=val;
+    }
     private void sendInitializationPacket(DataOutputStream printWriter, int id) throws IOException {
+        System.out.println("sending initialization");
         printWriter.writeInt(id);
         printWriter.flush();
 
