@@ -1,6 +1,7 @@
 package ro.deiutzentartainment.connection.handler;
 
 import ro.deiutzblaxo.cloud.fileutils.ProgramDirectoryUtilities;
+import ro.deiutzblaxo.cloud.fileutils.zip.FileUtils;
 import ro.deiutzentartainment.config.Config;
 import ro.deiutzentartainment.config.ConfigConnection;
 
@@ -32,5 +33,14 @@ public interface Handler {
 
     Game getGame();
     int getPacketSize();
+
+     default File getWorkFolder(){
+        File file =  new File(getTempFolder() + "/putTempFile");
+        if(file.exists())
+            FileUtils.delete(file);
+        else
+            file.mkdirs();
+        return file;
+    }
 
 }

@@ -1,9 +1,9 @@
 package ro.deiutzentartainment.connection;
 
-import com.google.gson.Gson;
 import lombok.SneakyThrows;
-import ro.deiutzentartainment.connection.handler.GetGameRequestHandler;
-import ro.deiutzentartainment.connection.handler.PutGameRequestsHandler;
+import ro.deiutzentartainment.connection.handler.GetGameSaveHandler;
+import ro.deiutzentartainment.connection.handler.PutGameDataHandler;
+import ro.deiutzentartainment.connection.handler.PutGameSaveHandler;
 import ro.deiutzentartainment.games.data.Game;
 
 import java.io.*;
@@ -21,26 +21,37 @@ public class RequestHandler {
         System.out.println("hostname: " + hostname + " - Port is "+ port);
     }
     @SneakyThrows
-    public void getGameSave(Game game){
-        Socket socket = new Socket(hostname,port);
-        DataInputStream reader = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-        DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-        sendInitializationPacket(writer,1);
-        GetGameRequestHandler gameRequestHandler = new GetGameRequestHandler(game,socket,reader,writer);
-        gameRequestHandler.Start();
-
-
-    }
-    @SneakyThrows
     public boolean putGameSave(Game game){
         Socket socket = new Socket(hostname,port);
         DataInputStream reader = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
         DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
         sendInitializationPacket(writer,0);
-        PutGameRequestsHandler gameRequestHandler = new PutGameRequestsHandler(game,socket,writer,reader);
+        PutGameSaveHandler gameRequestHandler = new PutGameSaveHandler(game,socket,writer,reader);
         gameRequestHandler.Start();
         return false;
     }
+    @SneakyThrows
+    public void getGameSave(Game game){
+        Socket socket = new Socket(hostname,port);
+        DataInputStream reader = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+        DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+        sendInitializationPacket(writer,1);
+        GetGameSaveHandler gameRequestHandler = new GetGameSaveHandler(game,socket,reader,writer);
+        gameRequestHandler.Start();
+    }
+    @SneakyThrows
+    public boolean putGameData(Game game){
+        Socket socket = new Socket(hostname,port);
+        DataInputStream reader = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+        DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+        sendInitializationPacket(writer,2);
+        PutGameDataHandler gameRequestHandler = new PutGameDataHandler(game,socket,writer,reader);
+        gameRequestHandler.Start();
+        return false;
+    }
+
+
+
     public void setCheckSize(boolean val){
         this.checkSize=val;
     }

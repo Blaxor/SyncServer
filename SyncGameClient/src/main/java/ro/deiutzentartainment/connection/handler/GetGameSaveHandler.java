@@ -8,6 +8,7 @@ import ro.deiutzblaxo.cloud.fileutils.zip.FileUtils;
 import ro.deiutzentartainment.config.Config;
 import ro.deiutzentartainment.config.ConfigConnection;
 import ro.deiutzentartainment.games.data.Game;
+import ro.deiutzentartainment.games.data.GameHelper;
 
 import java.io.*;
 import java.net.Socket;
@@ -16,7 +17,7 @@ import java.net.Socket;
 
 
 
-public class GetGameRequestHandler implements Handler {
+public class GetGameSaveHandler implements Handler {
 
     Socket socket;
     DataInputStream bufferedReader;
@@ -27,7 +28,7 @@ public class GetGameRequestHandler implements Handler {
     String dataExtension = ".zip";
     static int packet_size = 1024;
 
-    public GetGameRequestHandler(Game game, Socket socket,  DataInputStream bufferedReader, DataOutputStream printWriter){
+    public GetGameSaveHandler(Game game, Socket socket,  DataInputStream bufferedReader, DataOutputStream printWriter){
         this.game=game;
         this.socket=socket;
         this.bufferedReader=bufferedReader;
@@ -70,15 +71,12 @@ public class GetGameRequestHandler implements Handler {
     }
 
     private void unzipToFile() {
-        try {
+
             System.out.println("Unzipping the game save " + game.getName() );
-            if(new File(game.getSavePath()).exists())
-                FileUtils.delete(new File(game.getSavePath()));
-            ArchiveHandler.unzip(getZipTempPath(),game.getSavePath());
+            GameHelper.unpackSave(game,new File(getZipTempPath()));
+            GameHelper.unpackGame(game,new File(getZipTempPath()));
             System.out.println("Done unzipping the game save " + game.getName() );
-        } catch (ZipException e) {
-            e.printStackTrace();
-        }
+
     }
 
     private void receiveAllThePackets(DataInputStream bufferedReader) {

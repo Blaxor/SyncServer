@@ -1,15 +1,22 @@
 package ro.deiutzentartainment.games.data;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-
 public interface Game {
 
      String getName();
      String getSavePath();
+     String getGamePath();
+     boolean existsGamePath();
 
-     BufferedImage getImage();
+     default String getExportInfo(){
+      return getName()+";"+getRawSavePath()+";"+getRawGamePath();
+     }
+
+     String getRawGamePath();
+
+     String getRawSavePath();
 
 
-
+     default String getPrettyWritten(){
+          return "Name: " + getName() + "\n"+"Save Path: " + getSavePath() +"\n" + "Game path: " + getGamePath();
+     }
 }

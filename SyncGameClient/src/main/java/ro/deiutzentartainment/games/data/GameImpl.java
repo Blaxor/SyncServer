@@ -1,16 +1,25 @@
 package ro.deiutzentartainment.games.data;
 
+import lombok.ToString;
 import ro.deiutzentartainment.games.GameHandlerImpl;
 
 import java.awt.image.BufferedImage;
 
+@ToString
 public class GameImpl implements Game{
 
-    String name,path;
-    public GameImpl(String name, String path){
+    String name,savePath,gamePath;
+    public GameImpl(String name, String savePath){
         this.name=name;
-        this.path=path;
+        this.savePath=savePath;
+        this.gamePath="";
     }
+    public GameImpl(String name, String savePath, String gamePath){
+        this.name=name;
+        this.savePath=savePath;
+        this.gamePath=gamePath;
+    }
+
 
     @Override
     public String getName() {
@@ -19,19 +28,36 @@ public class GameImpl implements Game{
 
     @Override
     public String getSavePath() {
-        return path;
+        return replacePlaceholders(savePath);
+    }
+    @Override
+    public String getRawSavePath() {
+        return savePath;
     }
 
     @Override
-    public BufferedImage getImage() {
-        return null;
+    public String getGamePath() {
+        return replacePlaceholders(gamePath);
     }
 
     @Override
-    public String toString() {
-        return "GameImpl{" +
-                "name='" + name + '\'' +
-                ", path='" + path + '\'' +
-                '}';
+    public String getRawGamePath() {
+        return gamePath;
     }
+    @Override
+    public boolean existsGamePath() {
+        return gamePath!= "";
+    }
+
+
+
+
+
+    private String replacePlaceholders(String string){
+
+        return string.replaceFirst("#OS_USER_NAME#",System.getenv("USERNAME"));
+
+    }
+
+
 }

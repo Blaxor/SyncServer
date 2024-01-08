@@ -1,0 +1,4 @@
+# #OS_USER_NAME# placeholder for the env value "USERNAME"
+#
+RimWorld;windows;C:\Users\#OS_USER_NAME#\AppData\LocalLow\Ludeon Studios\RimWorld by Ludeon Studios;C:\Program Files (x86)\Steam\steamapps\common\RimWorld
+SpaceEngineers;windows;C:\Users\#OS_USER_NAME#\AppData\Roaming\SpaceEngineers;C:\Program Files (x86)\Steam\steamapps\common\SpaceEngineers

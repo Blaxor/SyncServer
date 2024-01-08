@@ -146,10 +146,10 @@ public class PutGameConnectionHandler implements ConnectionHandler{
     public void readPackets(DataInputStream inputStream){
 
         try {
-            Files.receiveFile(inputStream,getPacketSize(),generateSaveLocation(gameName));
             if(generateSaveLocation(gameName).exists()){
                 FileUtils.delete(generateSaveLocation(gameName));
             }
+            Files.receiveFile(inputStream,getPacketSize(),generateSaveLocation(gameName));
         } catch (Exception e) {
             e.printStackTrace();
         }

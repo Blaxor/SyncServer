@@ -2,6 +2,8 @@ package ro.deiutzentartainment.connection.handler;
 
 import net.lingala.zip4j.exception.ZipException;
 
+import org.zeroturnaround.zip.NameMapper;
+import org.zeroturnaround.zip.ZipUtil;
 import ro.deiutzblaxo.cloud.fileutils.communication.Files;
 import ro.deiutzblaxo.cloud.fileutils.zip.ArchiveHandler;
 import ro.deiutzblaxo.cloud.fileutils.zip.FileUtils;
@@ -9,14 +11,16 @@ import ro.deiutzentartainment.config.Config;
 import ro.deiutzentartainment.config.ConfigConnection;
 import ro.deiutzentartainment.config.ConfigFiles;
 import ro.deiutzentartainment.connection.handler.Handler;
+import ro.deiutzentartainment.games.GameHandler;
 import ro.deiutzentartainment.games.data.Game;
+import ro.deiutzentartainment.games.data.GameHelper;
 
 import java.io.*;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-public class PutGameRequestsHandler implements Handler {
+public class PutGameSaveHandler implements Handler {
 
 
 
@@ -31,7 +35,7 @@ public class PutGameRequestsHandler implements Handler {
     static String dataExtension = ".zip";
 
     static int packet_size = 1024;
-    public PutGameRequestsHandler(Game game, Socket socket, DataOutputStream output, DataInputStream input){
+    public PutGameSaveHandler(Game game, Socket socket, DataOutputStream output, DataInputStream input){
         this.socket=socket;
         this.game=game;
         this.input=input;
@@ -63,7 +67,7 @@ public class PutGameRequestsHandler implements Handler {
 
 
 
-            FileUtils.delete(new File(getZipTempPath()));
+           // FileUtils.delete(new File(getZipTempPath()));
 
         }catch (FileNotFoundException nf){
             System.out.println("Game save not found");
@@ -87,8 +91,9 @@ public class PutGameRequestsHandler implements Handler {
 
     private void createTempFile() throws ZipException, FileNotFoundException {
         System.out.println("Creating zip file");
-        ArchiveHandler.zip(game.getSavePath(),getZipTempPath());
-        System.out.println("Finished creating zip file");
+        GameHelper.packSave(game,new File(getZipTempPath()));
+        GameHelper.packGame(game,new File(getZipTempPath()));
+        System.out.println("Created the zip file");
     }
     public void sendLastModificationTime(File file) throws IOException {
         long last = FileUtils.lastTimeModificationTime(file);
@@ -131,12 +136,12 @@ public class PutGameRequestsHandler implements Handler {
         return  tempFolder;
     }
     public String getZipTempPath(){
-        return tempFolder.getPath()+"/putTempFile"+dataExtension;
+        return tempFolder.getPath()+"\\datafinal"+dataExtension;
     }
 
     @Override
     public void setTempFolder(File file) {
-tempFolder = file;
+        tempFolder = file;
     }
 
     @Override
@@ -148,4 +153,8 @@ tempFolder = file;
     public int getPacketSize() {
         return packet_size;
     }
+
+
+
+
 }

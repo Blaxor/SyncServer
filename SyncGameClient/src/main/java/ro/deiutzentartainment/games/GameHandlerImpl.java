@@ -13,7 +13,6 @@ public class GameHandlerImpl implements GameHandler {
 
     private UUID id = UUID.randomUUID();
     RequestHandler requestHandler;
-    private String TEMP_FILE_PATH = ProgramDirectoryUtilities.getProgramDirectory() + "/temp/";
     public GameHandlerImpl(ConfigConnection configConnection){
         this.requestHandler = new RequestHandler(
                 (String) configConnection.getConfig(Config.IP_ADDRESS),
@@ -21,17 +20,27 @@ public class GameHandlerImpl implements GameHandler {
 
     }
     @Override
-    public void saveGame(Game game) {
-        System.out.println("Saving the game "+ game.getName());
+    public void saveGameSave(Game game) {
+        System.out.println("Saving the game save "+ game.getName());
         requestHandler.putGameSave(game);
     }
 
     @SneakyThrows
     @Override
-    public void loadGame(Game game) {
-        System.out.println("loading the game "+ game.getName());
+    public void loadGameSave(Game game) {
+        System.out.println("loading the game save "+ game.getName());
         requestHandler.getGameSave(game);
 
+
+    }
+
+    @Override
+    public void saveGameData(Game game) {
+
+    }
+
+    @Override
+    public void loadGameData(Game game) {
 
     }
 

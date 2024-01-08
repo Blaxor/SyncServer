@@ -4,8 +4,12 @@ import ro.deiutzentartainment.games.data.Game;
 
 public interface GameHandler {
 
-    void saveGame(Game game);
-    void loadGame(Game game);
+    void saveGameSave(Game game);
+    void loadGameSave(Game game);
+
+    void saveGameData(Game game);
+
+    void loadGameData(Game game);
 
     String getIdHandler();
 
