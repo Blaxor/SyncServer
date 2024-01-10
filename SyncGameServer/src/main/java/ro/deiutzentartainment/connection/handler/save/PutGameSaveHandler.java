@@ -1,4 +1,4 @@
-package ro.deiutzentartainment.connection.handler;
+package ro.deiutzentartainment.connection.handler.save;
 
 import lombok.SneakyThrows;
 import ro.deiutzblaxo.cloud.fileutils.communication.Files;
@@ -6,6 +6,7 @@ import ro.deiutzblaxo.cloud.fileutils.zip.FileUtils;
 import ro.deiutzentartainment.config.Config;
 import ro.deiutzentartainment.config.ConfigFile;
 import ro.deiutzentartainment.connection.ConnectionManager;
+import ro.deiutzentartainment.connection.handler.ConnectionHandler;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -16,39 +17,30 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PutGameConnectionHandler implements ConnectionHandler{
+public class PutGameSaveHandler implements ConnectionHandler {
 
-    Socket socket;
-    ConnectionManager connectionManager;
+    private Socket socket;
+    private ConnectionManager connectionManager;
 
 
-    private UUID uuid;
 
-    String gameName;
+    private String gameName;
 
-    private File folderTemp;
 
     private DataInputStream reader;
     private DataOutputStream writer;
 
-    private static int size_packet = 1024*1024*200; // (200mb)
-
-
-
-
-
-    public PutGameConnectionHandler(ConnectionManager connectionManager, Socket socket,DataInputStream reader, DataOutputStream writer, UUID uuid) {
+    public PutGameSaveHandler(ConnectionManager connectionManager, Socket socket, DataInputStream reader, DataOutputStream writer) {
         this.socket=socket;
         this.connectionManager=connectionManager;
-        this.uuid =uuid;
+
         this.reader = reader;
         this.writer =writer;
-        size_packet  = (int) ConfigFile.instance().getConfig(Config.PACKET_SIZE);
+
     }
     @Override
     public void Start() {
 
-        generateTempFolder();
         try {
             gameName = readGameName(reader);
                 if(sendIsLocalModificationNewer()){
@@ -69,9 +61,6 @@ public class PutGameConnectionHandler implements ConnectionHandler{
                 writer.flush();
                 System.out.println("Client size is not bigger, not saving");
             }
-
-
-
             } catch (Exception e) {
                 e.printStackTrace();
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "FAILED");
@@ -82,32 +71,15 @@ public class PutGameConnectionHandler implements ConnectionHandler{
 
     }
 
-    private boolean isClientBigger() throws IOException {
-        if(ConfigFile.instance().getBoolean(Config.CHECK_SIZE)){
-
-            Long clientSize = reader.readLong();
-            Long localsize = getSaveFile(gameName,true).length();
-            System.out.println(clientSize +" <- client | local -> " + localsize);
-            return clientSize >= localsize;
-        }
-        return true;
+    @SneakyThrows
+    public String readGameName(DataInputStream inputStream){
+        System.out.println("Waiting for game name");
+        return inputStream.readUTF();
     }
 
-    @Override
-    public void Stop() {
-        System.out.println("Closing PutGameConnectionHandler");
-        deleteTempFolder();
-        connectionManager.getConnections().remove(uuid);
-        try {
-            socket.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
     boolean isLocalModificationNewer() throws IOException {
         long clientEpoch = reader.readLong();
-        long localEpoch = generateSaveLocation(gameName).lastModified();
+        long localEpoch = getFile(gameName,false,0).lastModified();
         System.out.println("Client epoch " + clientEpoch+ "| Local Epoch " + localEpoch );
         return localEpoch > clientEpoch;
     }
@@ -117,53 +89,42 @@ public class PutGameConnectionHandler implements ConnectionHandler{
         writer.flush();
         return isLocalNewer;
     }
-    @Override
-    public UUID getUUID() {
-        return uuid;
-    }
 
-    @Override
-    public void setTempFolder(File temp) {
-        this.folderTemp= temp;
-    }
+    private boolean isClientBigger() throws IOException {
+        if(ConfigFile.instance().getBoolean(Config.CHECK_SIZE)){
 
-    @Override
-    public File getTempFolder() {
-        return folderTemp;
-    }
-
-    @Override
-    public int getPacketSize() {
-        return size_packet;
-    }
-
-    @SneakyThrows
-    public String readGameName(DataInputStream inputStream){
-        System.out.println("Waiting for game name");
-        return inputStream.readUTF();
+            Long clientSize = reader.readLong();
+            Long localsize = getFile(gameName,true,0).length();
+            System.out.println(clientSize +" <- client | local -> " + localsize);
+            return clientSize >= localsize;
+        }
+        return true;
     }
 
     public void readPackets(DataInputStream inputStream){
 
         try {
-            if(generateSaveLocation(gameName).exists()){
-                FileUtils.delete(generateSaveLocation(gameName));
+            File file = getFile(gameName,true,0);
+            if(file.exists()){
+                FileUtils.delete(file);
             }
-            Files.receiveFile(inputStream,getPacketSize(),generateSaveLocation(gameName));
+            Files.receiveFile(inputStream,SIZE_PACKET,file);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    private File generateSaveLocation(String gameName) {
-        File folderSave = ConfigFile.instance().getSaveGameFolder();
-        if(!folderSave.exists())
-            folderSave.mkdirs();
-        return new File(folderSave,gameName+".zip");
-
-
+    @Override
+    public void Stop() {
+        System.out.println("Closing PutGameConnectionHandler");
+        try {
+            socket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
+
 
 }
 //TODO ORDER PACKETS ->

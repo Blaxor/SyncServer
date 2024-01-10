@@ -61,4 +61,11 @@ public class ConfigFile {
         }
         return folder;
     }
+    public File getDataGameFolder(){
+        File folder = new File(ProgramDirectoryUtilities.getProgramDirectory()+getConfig(Config.DATA_GAME_FOLDER));
+        if(!folder.exists()){
+            folder.mkdirs();
+        }
+        return folder;
+    }
 }

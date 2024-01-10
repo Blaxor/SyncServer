@@ -1,5 +1,9 @@
 listener-port: 8020
-temp-folder: '/test/server/temp/'
-save-folder: '/test/server/saveGames/'
-# Checks: Same between client and server9
-check_size: true
+temp-folder: '/server/temp/'
+save-folder: '/server/saveGames/'
+data-folder: '/server/dataGames/'
+# Checks: Same between client and server.
+check_size: false
+#Packet's size:
+size_batch: 1000000000
+threshold_check_size: 1000000

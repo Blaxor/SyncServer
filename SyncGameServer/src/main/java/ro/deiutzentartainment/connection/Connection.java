@@ -2,8 +2,10 @@ package ro.deiutzentartainment.connection;
 
 import com.google.gson.Gson;
 import ro.deiutzentartainment.connection.handler.ConnectionHandler;
-import ro.deiutzentartainment.connection.handler.GetGameConnectionHandler;
-import ro.deiutzentartainment.connection.handler.PutGameConnectionHandler;
+import ro.deiutzentartainment.connection.handler.game.GetGameDataHandler;
+import ro.deiutzentartainment.connection.handler.save.GetGameSaveHandler;
+import ro.deiutzentartainment.connection.handler.save.PutGameSaveHandler;
+import ro.deiutzentartainment.connection.handler.game.PutGameDataHandler;
 
 import java.io.*;
 import java.net.Socket;
@@ -38,10 +40,16 @@ public class Connection {
 
         switch (type) {
             case 0:
-                connectionHandler = new PutGameConnectionHandler(connectionManager, socket, reader, writer, uuid);
+                connectionHandler = new PutGameSaveHandler(connectionManager, socket, reader, writer);
                 break;
             case 1:
-                connectionHandler = new GetGameConnectionHandler(connectionManager,socket,reader,writer,uuid);
+                connectionHandler = new GetGameSaveHandler(connectionManager,socket,reader,writer);
+                break;
+            case 2:
+                connectionHandler = new PutGameDataHandler(connectionManager,socket,reader,writer);
+                break;
+            case 3:
+                connectionHandler = new GetGameDataHandler(connectionManager,socket,reader,writer);
                 break;
         }
         connectionHandler.Start();

@@ -7,7 +7,7 @@ public enum Config {
     ID_CLIENT(ConfigFiles.CONFIG_CONNECTION,"id","0000-0000-0000-0000"),
     TEMP_FOLDER(ConfigFiles.CONFIG_CONNECTION,"temp_folder","/client/temp/"),
     BATCH_SIZE(ConfigFiles.CONFIG_CONNECTION,"size_batch","1048576"),
-    CHECK_SIZE(ConfigFiles.CONFIG_CONNECTION,"check_size","True");
+    CHECK_SIZE(ConfigFiles.CONFIG_CONNECTION,"check_size","true");
 
 
 

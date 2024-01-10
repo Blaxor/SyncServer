@@ -1,4 +1,4 @@
-package ro.deiutzentartainment.connection.handler;
+package ro.deiutzentartainment.connection.handler.save;
 
 import com.google.gson.Gson;
 import net.lingala.zip4j.exception.ZipException;
@@ -7,6 +7,7 @@ import ro.deiutzblaxo.cloud.fileutils.zip.ArchiveHandler;
 import ro.deiutzblaxo.cloud.fileutils.zip.FileUtils;
 import ro.deiutzentartainment.config.Config;
 import ro.deiutzentartainment.config.ConfigConnection;
+import ro.deiutzentartainment.connection.handler.Handler;
 import ro.deiutzentartainment.games.data.Game;
 import ro.deiutzentartainment.games.data.GameHelper;
 
@@ -23,17 +24,13 @@ public class GetGameSaveHandler implements Handler {
     DataInputStream bufferedReader;
     Game game;
     DataOutputStream printWriter;
-    private static Gson gson = new Gson();
     private File tempFolder;
-    String dataExtension = ".zip";
-    static int packet_size = 1024;
 
     public GetGameSaveHandler(Game game, Socket socket,  DataInputStream bufferedReader, DataOutputStream printWriter){
         this.game=game;
         this.socket=socket;
         this.bufferedReader=bufferedReader;
         this.printWriter=printWriter;
-        this.packet_size= (int) ConfigConnection.getInstance().getConfig(Config.BATCH_SIZE);
     }
 
 
@@ -42,7 +39,6 @@ public class GetGameSaveHandler implements Handler {
         try {
 
             sendGameName(printWriter);
-            generateTempFolder();
             if(isClientBigger()) {
                 System.out.println("Client size is bigger, not loading the cloud sync game save.");
             }
@@ -50,10 +46,7 @@ public class GetGameSaveHandler implements Handler {
                 System.out.println("Client size is not bigger, loading the cloud sync game save");
                 receiveAllThePackets(bufferedReader);
                 unzipToFile();
-                FileUtils.delete(new File(getZipTempPath()));
             }
-
-
         }catch (Exception e){
             e.printStackTrace();
         }finally {
@@ -67,43 +60,28 @@ public class GetGameSaveHandler implements Handler {
             printWriter.flush();
             return bufferedReader.readBoolean();
         }
-        return false;
+        return bufferedReader.readBoolean();
     }
 
     private void unzipToFile() {
-
             System.out.println("Unzipping the game save " + game.getName() );
-            GameHelper.unpackSave(game,new File(getZipTempPath()));
-            GameHelper.unpackGame(game,new File(getZipTempPath()));
+            GameHelper.unpackSave(game,getTempFile());
             System.out.println("Done unzipping the game save " + game.getName() );
 
     }
 
     private void receiveAllThePackets(DataInputStream bufferedReader) {
         try {
-            Files.receiveFile(bufferedReader,getPacketSize(),new File(getZipTempPath()));
+            Files.receiveFile(bufferedReader,SIZE_PACKET,getTempFile());
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-    public String getZipTempPath(){
-        return tempFolder.getPath()+"/getTempZip"+dataExtension;
     }
 
 
     public void sendGameName(DataOutputStream writer) throws IOException {
         writer.writeUTF(game.getName());
         writer.flush();
-    }
-    @Override
-    public void Stop() {
-        System.out.println("Closing getGameRequestHandler");
-        try {
-            socket.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
     }
     private long getZipSize() throws ZipException, FileNotFoundException {
         System.out.println("Creating zip file");
@@ -113,30 +91,18 @@ public class GetGameSaveHandler implements Handler {
             return 0;
         }
 
-        ArchiveHandler.zip(game.getSavePath(),getZipTempPath());
-        System.out.println("Size of the zip is:  " + new File(getZipTempPath()).length());
-        return new File(getZipTempPath()).length();
+        ArchiveHandler.zip(game.getSavePath(),getTempFile().getAbsolutePath());
+        System.out.println("Size of the zip is:  " + getTempFile().length());
+        return getTempFile().length();
 
     }
 
     @Override
-    public File getTempFolder() {
-        return tempFolder;
-    }
+    public void Stop() {
+        FileUtils.delete(getTempFile());
+        System.out.println("Closing getGameRequestHandler");
 
-    @Override
-    public void setTempFolder(File file) {
-tempFolder = file;
-    }
 
-    @Override
-    public Game getGame() {
-        return game;
-    }
-
-    @Override
-    public int getPacketSize() {
-        return packet_size;
     }
 
 

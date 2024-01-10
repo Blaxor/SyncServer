@@ -27,37 +27,99 @@ public class Main {
             String input = null;
             try {
                 System.out.println("Please input the next operation save or load, game.");
-                input = reader.readLine();
-                input = input.toLowerCase();
+                input = reader.readLine().toLowerCase();
                 switch (input) {
 
                     case "save" -> {
-                        System.out.println("Please share the game name: ");
-                        String gameName = reader.readLine().toLowerCase();
-                        Game game = games.getGame(gameName);
-                        if(game==null) {
-                            System.out.println("The game is not found, continue");
-                            continue;
-                        }else{
-                            System.out.println("Saving game...");
-                            gameHandler.saveGameSave(game);
 
-                        }
-                        break;
-                    }
-                    case "load" ->{
+                        System.out.println("'game data', 'save data','all'");
+
+                        input = reader.readLine().toLowerCase();
+                        if(input.equalsIgnoreCase("game data")){
                             System.out.println("Please share the game name: ");
                             String gameName = reader.readLine().toLowerCase();
-                            Game game =games.getGame(gameName);
-                            if(game == null){
-                                System.out.println("Game not found.");
-                            }else {
-                                System.out.println("Loading game...");
-                                gameHandler.loadGameSave(game);
-                            }
+                            Game game = games.getGame(gameName);
+                            if(game==null) {
+                                System.out.println("The game is not found, continue");
+                                continue;
+                            }else{
+                                System.out.println("Saving game...");
+                                gameHandler.saveGameData(game);
 
-                            break;
+                            }
+                        }else if(input.equalsIgnoreCase("all")){
+                            System.out.println("Please share the game name: ");
+                            String gameName = reader.readLine().toLowerCase();
+                            Game game = games.getGame(gameName);
+                            if (game == null) {
+                                System.out.println("Game not found.");
+                            } else {
+                                System.out.println("Loading save data...");
+                                gameHandler.saveGameSave(game);
+                                System.out.println("Loading game data...");
+                                gameHandler.saveGameData(game);
+                            }
+                        }else{
+                            System.out.println("Please share the game name: ");
+                            String gameName = reader.readLine().toLowerCase();
+                            Game game = games.getGame(gameName);
+                            if(game==null) {
+                                System.out.println("The game is not found, continue");
+                                continue;
+                            }else{
+                                System.out.println("Saving game...");
+                                gameHandler.saveGameSave(game);
+
+                            }
                         }
+
+
+
+                        break;
+                    }
+                    case "load" -> {
+                        System.out.println("'game data', 'save data','all'");
+
+                        input = reader.readLine().toLowerCase();
+
+                            if (input.equalsIgnoreCase("game data")) {
+                                System.out.println("Please share the game name: ");
+                                String gameName = reader.readLine().toLowerCase();
+                                Game game = games.getGame(gameName);
+                                if (game == null) {
+                                    System.out.println("Game not found.");
+                                } else {
+                                    System.out.println("Loading game...");
+                                    gameHandler.loadGameData(game);
+                                }
+                            } else if(input.equalsIgnoreCase("all")){
+                                System.out.println("Please share the game name: ");
+                                String gameName = reader.readLine().toLowerCase();
+                                Game game = games.getGame(gameName);
+                                if (game == null) {
+                                    System.out.println("Game not found.");
+                                } else {
+                                    System.out.println("Loading save data...");
+                                    gameHandler.loadGameSave(game);
+                                    System.out.println("Loading game data...");
+                                    gameHandler.loadGameData(game);
+                                }
+
+
+                            }else{
+                                System.out.println("Please share the game name: ");
+                                String gameName = reader.readLine().toLowerCase();
+                                Game game = games.getGame(gameName);
+                                if (game == null) {
+                                    System.out.println("Game not found.");
+                                } else {
+                                    System.out.println("Loading game...");
+                                    gameHandler.loadGameSave(game);
+                                }
+                            }
+                                break;
+
+                    }
                         case "game" ->{
                         System.out.println("Select add,remove,list or info");
                             input = reader.readLine().toLowerCase();

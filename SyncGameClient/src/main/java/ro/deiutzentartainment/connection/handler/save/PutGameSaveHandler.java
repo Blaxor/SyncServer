@@ -1,4 +1,4 @@
-package ro.deiutzentartainment.connection.handler;
+package ro.deiutzentartainment.connection.handler.save;
 
 import net.lingala.zip4j.exception.ZipException;
 
@@ -29,18 +29,12 @@ public class PutGameSaveHandler implements Handler {
     Socket socket;
     DataOutputStream output;
     DataInputStream input;
-    File tempFolder;
     Game game;
-
-    static String dataExtension = ".zip";
-
-    static int packet_size = 1024;
     public PutGameSaveHandler(Game game, Socket socket, DataOutputStream output, DataInputStream input){
         this.socket=socket;
         this.game=game;
         this.input=input;
         this.output=output;
-        this. packet_size= (int)ConfigConnection.getInstance().getConfig(Config.BATCH_SIZE);
     }
     @Override
     public void Start() {
@@ -55,8 +49,7 @@ public class PutGameSaveHandler implements Handler {
             }else{
                 System.out.println("Local is newer, continue sending data");
             }
-            generateTempFolder();
-            createTempFile();
+            zipToTemp();
             if(isClientBigger()) {
                 System.out.println("Client size is bigger,saving .");
                 sendPackets(output);
@@ -64,10 +57,6 @@ public class PutGameSaveHandler implements Handler {
             else {
                 System.out.println("Client size is not bigger, not saving");
             }
-
-
-
-           // FileUtils.delete(new File(getZipTempPath()));
 
         }catch (FileNotFoundException nf){
             System.out.println("Game save not found");
@@ -80,19 +69,19 @@ public class PutGameSaveHandler implements Handler {
     }
     private boolean isClientBigger() throws IOException {
         if(ConfigConnection.getInstance().getBoolean(Config.CHECK_SIZE)){
-            long size = new File(getZipTempPath()).length();
+            long size = getTempFile().length();
             output.writeLong(size);
             output.flush();
             return input.readBoolean();
         }
-        return true;
+
+        return input.readBoolean();
     }
 
 
-    private void createTempFile() throws ZipException, FileNotFoundException {
+    private void zipToTemp() throws FileNotFoundException {
         System.out.println("Creating zip file");
-        GameHelper.packSave(game,new File(getZipTempPath()));
-        GameHelper.packGame(game,new File(getZipTempPath()));
+        GameHelper.packSave(game,getTempFile());
         System.out.println("Created the zip file");
     }
     public void sendLastModificationTime(File file) throws IOException {
@@ -103,9 +92,7 @@ public class PutGameSaveHandler implements Handler {
         output.flush();
     }
     public boolean getConfirmationLocalIsOlder() throws IOException {
-
         return input.readBoolean();
-
     }
 
     public void sendGameName(DataOutputStream output) throws IOException {
@@ -115,44 +102,20 @@ public class PutGameSaveHandler implements Handler {
     }
 
     public void sendPackets(DataOutputStream output) throws IOException {
-        Files.sendFile(output,new File(getZipTempPath()),getPacketSize());
+        System.out.println("Sending file");
+        Files.sendFile(output,getTempFile(),SIZE_PACKET);
+        System.out.println(" file sent");
         output.flush();
-        output.close();
+       //output.close();
     }
 
     @Override
     public void Stop() {
         System.out.println("Closing putGameRequestHandler");
-        try {
-            socket.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        FileUtils.delete(getTempFile());
 
     }
 
-    @Override
-    public File getTempFolder() {
-        return  tempFolder;
-    }
-    public String getZipTempPath(){
-        return tempFolder.getPath()+"\\datafinal"+dataExtension;
-    }
-
-    @Override
-    public void setTempFolder(File file) {
-        tempFolder = file;
-    }
-
-    @Override
-    public Game getGame() {
-        return null;
-    }
-
-    @Override
-    public int getPacketSize() {
-        return packet_size;
-    }
 
 
 

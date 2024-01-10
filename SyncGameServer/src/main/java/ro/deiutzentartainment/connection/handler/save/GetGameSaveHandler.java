@@ -1,34 +1,33 @@
-package ro.deiutzentartainment.connection.handler;
+package ro.deiutzentartainment.connection.handler.save;
 
-import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import ro.deiutzblaxo.cloud.fileutils.communication.Files;
 import ro.deiutzentartainment.config.Config;
 import ro.deiutzentartainment.config.ConfigFile;
 import ro.deiutzentartainment.connection.ConnectionManager;
+import ro.deiutzentartainment.connection.handler.ConnectionHandler;
 
 
 import java.io.*;
 import java.net.Socket;
 import java.util.UUID;
 
-public class GetGameConnectionHandler implements ConnectionHandler {
-    ConnectionManager connectionManager;
-    Socket socket;
-    DataInputStream reader;
-    DataOutputStream writer;
-    UUID uuid;
-    private File tempfile;
-    private static int size_packet = 1024*1024*200; // (200mb)
-    String gameName;
+public class GetGameSaveHandler implements ConnectionHandler {
+    private ConnectionManager connectionManager;
+    private Socket socket;
+    private DataInputStream reader;
+    private DataOutputStream writer;
+    private String gameName;
 
-    public GetGameConnectionHandler(ConnectionManager connectionHandler, Socket socket, DataInputStream reader, DataOutputStream writer, UUID uuid) {
+
+
+
+    public GetGameSaveHandler(ConnectionManager connectionHandler, Socket socket, DataInputStream reader, DataOutputStream writer) {
     this.connectionManager=connectionHandler;
     this.socket=socket;
     this.reader=reader;
     this.writer=writer;
-    this.uuid=uuid;
-    size_packet = (int) ConfigFile.instance().getConfig(Config.PACKET_SIZE);
+
     }
 //TODO             //INITIALIZATION(INT), GameName(UTF), (data.....) bytes
     @SneakyThrows
@@ -36,9 +35,8 @@ public class GetGameConnectionHandler implements ConnectionHandler {
     public void Start() {
 
                 try {
-                    gameName = readGameName(reader);
-                    generateTempFolder();
-                    File file = getSaveFile(gameName, false);
+                    gameName = readGameName();
+                    File file = getFile(gameName,false,0);
                     if(isClientBigger()) {
                         System.out.println("Client size is bigger, not sending the game");
                         writer.writeBoolean(true);
@@ -62,14 +60,14 @@ public class GetGameConnectionHandler implements ConnectionHandler {
     }
 
     @SneakyThrows
-    private String readGameName(DataInputStream reader){
+    private String readGameName(){
         return reader.readUTF();
     }
 
     private boolean isClientBigger() throws IOException {
         if(ConfigFile.instance().getBoolean(Config.CHECK_SIZE)){
             Long clientSize = reader.readLong();
-            Long localsize = getSaveFile(gameName,false).length();
+            Long localsize = getFile(gameName,false,0).length();
             System.out.println(clientSize +" <- client | local -> " + localsize);
 
             return clientSize >= localsize;
@@ -79,7 +77,7 @@ public class GetGameConnectionHandler implements ConnectionHandler {
 
     @SneakyThrows
     public void sendAllThePackets(DataOutputStream stream, File file){
-        Files.sendFile(stream,file,getPacketSize());
+        Files.sendFile(stream,file,SIZE_PACKET);
         stream.flush();
         stream.close();
     }
@@ -87,8 +85,6 @@ public class GetGameConnectionHandler implements ConnectionHandler {
     @Override
     public void Stop() {
         System.out.println("Closing getGameConnectionHandler");
-        deleteTempFolder();
-        connectionManager.getConnections().remove(uuid);
         try {
             socket.close();
         } catch (IOException e) {
@@ -98,25 +94,7 @@ public class GetGameConnectionHandler implements ConnectionHandler {
 
     }
 
-    @Override
-    public UUID getUUID() {
-        return uuid;
-    }
 
-    @Override
-    public void setTempFolder(File temp) {
-        this.tempfile= temp;
-    }
-
-    @Override
-    public File getTempFolder() {
-return tempfile;
-    }
-
-    @Override
-    public int getPacketSize() {
-        return size_packet;
-    }
 
 
 }

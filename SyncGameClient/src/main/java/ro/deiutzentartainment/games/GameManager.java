@@ -106,7 +106,7 @@ public class GameManager {
                 throw new InvalidSavePathException(i);
             }
             String dataPath = "";
-            if(chunks.length > 3)
+            if(chunks.length >= 3)
                 dataPath = chunks[2];
             _logger.debug("Adding the game following game: ");
             games.put(name.toLowerCase(),new GameImpl(name,savePath,dataPath));

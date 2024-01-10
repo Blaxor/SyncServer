@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class ConnectionManager {
 
-    HashMap<UUID,Connection> connections = new HashMap();
+
     private Thread listenerThread;
     public ConnectionManager(int port){
         listenerThread = new Thread(()->{
@@ -20,7 +20,7 @@ public class ConnectionManager {
                     Socket socket = serverSocket.accept();
                     UUID uuid = UUID.randomUUID();
                     System.out.println("Server connection created with id " + uuid.toString());
-                    connections.put(uuid,new Connection(this,socket,uuid));
+                   new Connection(this,socket,uuid);
                 }
 
             } catch (IOException e) {
@@ -34,7 +34,5 @@ public class ConnectionManager {
 
     }
 
-    public HashMap<UUID, Connection> getConnections() {
-        return connections;
-    }
+
 }

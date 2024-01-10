@@ -17,10 +17,10 @@ public class GameHelper {
     }
     public static void packGame(Game game, File zip){
         if(game.existsGamePath())
-            ZipUtil.pack(new File(game.getGamePath()), zip,  name -> getZipFileGamePath() + name);
+            ZipUtil.pack(new File(game.getGamePath()), zip,  name -> name);
     }
     public static void packSave(Game game, File zip){
-        ZipUtil.pack(new File(game.getSavePath()), zip,  name -> getZipFileSavePath() + name);
+        ZipUtil.pack(new File(game.getSavePath()), zip,  name -> name);
     }
     public static void unpackGame(Game game, File zip){
         if(game.existsGamePath()){
@@ -28,7 +28,7 @@ public class GameHelper {
             if(location.exists())
                 FileUtils.delete(location);
             ZipUtil.unpack(zip, location,
-                    name -> name.startsWith(getZipFileGamePath()) ? name.substring(getZipFileGamePath().length()) : name);
+                    name -> name);
         }
     }
     public static void unpackSave(Game game, File zip){
@@ -36,7 +36,7 @@ public class GameHelper {
         if(location.exists())
             FileUtils.delete(location);
         ZipUtil.unpack(zip, location,
-                name -> name.startsWith(getZipFileSavePath()) ? name.substring(getZipFileSavePath().length()) : name);
+                name -> name);
     }
 
 
