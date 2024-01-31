@@ -3,7 +3,7 @@ temp-folder: 'server/temp/'
 save-folder: 'server/saveGames/'
 data-folder: 'server/dataGames/'
 # Checks: Same between client and server.
-check_size: true
+check_size: false
 #Packet's size:
 size_batch: 1048576
 threshold_check_size: 1000000

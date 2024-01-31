@@ -2,4 +2,4 @@ port-server: 8020
 ip-server: localhost
 id: 000-000-000-000
 size_batch: 1048576
-check_size: true
+check_size: false
