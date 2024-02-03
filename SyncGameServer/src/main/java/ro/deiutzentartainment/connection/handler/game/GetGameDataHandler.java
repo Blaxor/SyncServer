@@ -1,7 +1,7 @@
 package ro.deiutzentartainment.connection.handler.game;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ro.deiutzblaxo.cloud.fileutils.communication.Files;
 import ro.deiutzentartainment.connection.ConnectionManager;
 import ro.deiutzentartainment.connection.handler.ConnectionHandler;
@@ -14,7 +14,7 @@ import java.net.Socket;
 public class GetGameDataHandler implements ConnectionHandler {
 
     private final ConnectionManager connectionManager;
-    private static final Logger logger = LoggerFactory.getLogger(PutGameDataHandler.class);
+    private static final Logger _logger = LogManager.getLogger(PutGameDataHandler.class);
     private final Socket socket;
     private final DataInputStream input;
     private final DataOutputStream output;
@@ -46,7 +46,7 @@ public class GetGameDataHandler implements ConnectionHandler {
     public String getGameName(){
         try {
             String name = input.readUTF();
-            logger.debug("The name of the game is " + name);
+            _logger.debug("The name of the game is " + name);
             return name;
         } catch (IOException e) {
             throw new RuntimeException("Failed to get the name, the process needs to be restarted");

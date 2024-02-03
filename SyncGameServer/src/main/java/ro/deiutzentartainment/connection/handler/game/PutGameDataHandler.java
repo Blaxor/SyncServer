@@ -1,7 +1,8 @@
 package ro.deiutzentartainment.connection.handler.game;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ro.deiutzblaxo.cloud.fileutils.communication.Files;
 import ro.deiutzblaxo.cloud.fileutils.zip.FileUtils;
 import ro.deiutzentartainment.config.ConfigFile;
@@ -18,7 +19,7 @@ import java.util.UUID;
 public class PutGameDataHandler implements ConnectionHandler {
     private final ConnectionManager connectionManager;
 
-    private static Logger logger = LoggerFactory.getLogger(PutGameDataHandler.class);
+    private static Logger _logger = LogManager.getLogger(PutGameDataHandler.class);
 
     private final Socket socket;
     private final DataInputStream input;
@@ -46,7 +47,7 @@ public class PutGameDataHandler implements ConnectionHandler {
         try {
             Files.receiveFile(input,SIZE_PACKET,file);
         } catch (Exception e) {
-            logger.error("Error receiving file",  e);
+            _logger.error("Error receiving file",  e);
         }
         Stop();
     }
@@ -55,7 +56,7 @@ public class PutGameDataHandler implements ConnectionHandler {
         try {
             String name = input.readUTF();
 
-            logger.debug("The name of the game is " + name);
+            _logger.debug("The name of the game is " + name);
             return name;
         } catch (IOException e) {
             throw new RuntimeException("Failed to get the name, the process needs to be restarted");
