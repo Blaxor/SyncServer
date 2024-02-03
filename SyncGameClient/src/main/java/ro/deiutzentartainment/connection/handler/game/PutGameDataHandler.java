@@ -1,7 +1,7 @@
 package ro.deiutzentartainment.connection.handler.game;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ro.deiutzblaxo.cloud.fileutils.communication.Files;
 import ro.deiutzblaxo.cloud.fileutils.zip.FileUtils;
 import ro.deiutzentartainment.connection.handler.Handler;
@@ -19,7 +19,7 @@ public class PutGameDataHandler implements Handler {
     private DataOutputStream output;
     private DataInputStream input;
 
-    private static final Logger logger = LoggerFactory.getLogger(PutGameDataHandler.class);
+    private static final Logger _logger = LogManager.getLogger(PutGameDataHandler.class);
 
     public PutGameDataHandler(Game game, Socket socket, DataOutputStream writer, DataInputStream reader) {
         this.game=game;
@@ -35,33 +35,36 @@ public class PutGameDataHandler implements Handler {
         try {
             sendGameName();
         } catch (InvalidNameException e) {
-            logger.info("Invalid Game name");
+            _logger.info("Invalid Game name");
             Stop();
             return;
         }
         zipToTemp();
         try {
-            logger.info("Sending file");
-            Files.sendFile(output,getTempFile(),SIZE_PACKET);
+            sendPackets(output);
         } catch (IOException e) {
-            logger.error("Unable to send the file. Please retry",e);
+            _logger.error("Unable to send the file. Please retry",e);
         }
         Stop();
     }
     private void zipToTemp() {
-        logger.info("Zipping the game");
         GameHelper.packGame(game,getTempFile());
-        logger.info("Done zipping");
 
+    }
+    public void sendPackets(DataOutputStream output) throws IOException {
+        _logger.info("Starting sending the packets (packet_size= " + SIZE_PACKET+")" );
+        Files.sendFile(output,getTempFile(),SIZE_PACKET);
+        output.flush();
+        _logger.info("The packets have been sent.");
     }
 
     public void sendGameName() throws InvalidNameException {
         try {
-            logger.debug("Sending the game name " + game.getName());
+            _logger.info("Sending the game name " + game.getName());
             output.writeUTF(game.getName());
             output.flush();
         } catch (IOException e) {
-            logger.error("Unable to send the game name. Please retry.",e);
+            _logger.error("Unable to send the game name. Please retry.",e);
             throw new InvalidNameException(game.getName());
         }
     }
@@ -69,6 +72,8 @@ public class PutGameDataHandler implements Handler {
 
     @Override
     public void Stop() {
+        _logger.info("Finish Game Data saving, deleting the temporary file.");
+
         FileUtils.delete(getTempFile());
     }
 }

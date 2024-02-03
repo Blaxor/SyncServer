@@ -1,11 +1,10 @@
 package ro.deiutzentartainment.connection.handler.game;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ro.deiutzblaxo.cloud.fileutils.communication.Files;
 import ro.deiutzblaxo.cloud.fileutils.zip.FileUtils;
 import ro.deiutzentartainment.connection.handler.Handler;
-import ro.deiutzentartainment.connection.handler.save.GetGameSaveHandler;
 import ro.deiutzentartainment.exceptions.gamefile.InvalidNameException;
 import ro.deiutzentartainment.games.data.Game;
 import ro.deiutzentartainment.games.data.GameHelper;
@@ -22,12 +21,12 @@ public class GetGameDataHandler implements Handler {
     private DataOutputStream output;
     private DataInputStream input;
 
-    private static final Logger logger = LoggerFactory.getLogger(GetGameDataHandler.class);
+    private static Logger _logger = LogManager.getLogger(GetGameDataHandler.class);
     public GetGameDataHandler(Game game, Socket socket, DataInputStream reader, DataOutputStream writer) {
-        this.game=game;
-        this.socket=socket;
-        this.output=writer;
-        this.input=reader;
+        this.game = game;
+        this.socket = socket;
+        this.output = writer;
+        this.input = reader;
     }
 
     @Override
@@ -35,55 +34,65 @@ public class GetGameDataHandler implements Handler {
         try {
             sendGameName();
         } catch (InvalidNameException e) {
-            logger.info("Invalid Game name");
+            _logger.info("Invalid Game name");
             Stop();
             return;
         }
-        if(existConfirmation()){
-
+        if (existConfirmation()) {
             try {
-                Files.receiveFile(input,SIZE_PACKET,getTempFile());
-                GameHelper.unpackGame(game,getTempFile());
+                receiveAllThePackets(input);
+                GameHelper.unpackGame(game, getTempFile());
             } catch (Exception e) {
-                logger.error("Failed to get the file", e);
+                _logger.error("Failed to get the file", e);
             }
 
 
-        }else{
-            logger.info("There is nothing stored for this game.");
+        } else {
+            _logger.warn("There is nothing stored for this game.");
 
         }
         Stop();
 
     }
+
+
+
     public void sendGameName() throws InvalidNameException {
         try {
-            logger.debug("Sending the game name " + game.getName());
+            _logger.info("Sending the game name " + game.getName());
             output.writeUTF(game.getName());
             output.flush();
         } catch (IOException e) {
-            logger.error("Unable to send the game name. Please retry.",e);
             throw new InvalidNameException(game.getName());
         }
     }
 
-    public boolean existConfirmation(){
+    public boolean existConfirmation() {
         try {
+
             return input.readBoolean();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-
-
+    private void receiveAllThePackets(DataInputStream bufferedReader) {
+        try {
+            _logger.info("Downloading the data.");
+            Files.receiveFile(bufferedReader, SIZE_PACKET, getTempFile());
+            _logger.info("The data has been downloaded.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void Stop() {
-        FileUtils.delete(getTempFile());
-        try {
-            socket.close();
-        } catch (IOException e) {
+            _logger.info("Finish Game Data downloading, deleting the temporary file.");
+            FileUtils.delete(getTempFile());
+            try {
+                socket.close();
+            } catch (IOException e) {
+            }
         }
-    }
 }

@@ -2,6 +2,8 @@ package ro.deiutzentartainment.connection.handler.save;
 
 import net.lingala.zip4j.exception.ZipException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zeroturnaround.zip.NameMapper;
 import org.zeroturnaround.zip.ZipUtil;
 import ro.deiutzblaxo.cloud.fileutils.communication.Files;
@@ -30,6 +32,7 @@ public class PutGameSaveHandler implements Handler {
     DataOutputStream output;
     DataInputStream input;
     Game game;
+    private static Logger _logger = LogManager.getLogger(PutGameSaveHandler.class);
     public PutGameSaveHandler(Game game, Socket socket, DataOutputStream output, DataInputStream input){
         this.socket=socket;
         this.game=game;
@@ -44,26 +47,29 @@ public class PutGameSaveHandler implements Handler {
             sendLastModificationTime(new File(game.getSavePath()));
 
             if(getConfirmationLocalIsOlder()) {
-                System.out.println("Local is Older. Stopping process");
+                _logger.info("Local is Older. Stopping process");
                 return;
             }else{
-                System.out.println("Local is newer, continue sending data");
+                _logger.info("Local is newer, Continue");
             }
             zipToTemp();
-            if(isClientBigger()) {
-                System.out.println("Client size is bigger,saving .");
+            if(ConfigConnection.getInstance().getBoolean(Config.CHECK_SIZE)) {
+                if (isClientBigger()) {
+                    _logger.info("Client size is bigger,saving.");
+                    sendPackets(output);
+                } else {
+                    _logger.info("Client size is not bigger, not saving");
+                }
+            }else{
                 sendPackets(output);
-            }
-            else {
-                System.out.println("Client size is not bigger, not saving");
             }
 
         }catch (FileNotFoundException nf){
-            System.out.println("Game save not found");
+            _logger.info("Game save not found");
         }catch (Exception e) {
             e.printStackTrace();
         }finally {
-            System.out.println("STOP PutGameRequestHandler");
+            _logger.info("STOP PutGameRequestHandler");
             Stop();
         }
     }
@@ -80,14 +86,12 @@ public class PutGameSaveHandler implements Handler {
 
 
     private void zipToTemp() throws FileNotFoundException {
-        System.out.println("Creating zip file");
         GameHelper.packSave(game,getTempFile());
-        System.out.println("Created the zip file");
     }
     public void sendLastModificationTime(File file) throws IOException {
         long last = FileUtils.lastTimeModificationTime(file);
-        System.out.println("Last modification time epoch in ms: " + last + " in date second " +
-                LocalDateTime.ofEpochSecond(last/1000,0,ZoneOffset.UTC));
+        _logger.info("Last modification time epoch in ms: " + last + " in date second " +
+                LocalDateTime.ofEpochSecond(last/1000,0,ZoneOffset.UTC) + " sending it.");
         output.writeLong(last);
         output.flush();
     }
@@ -96,22 +100,21 @@ public class PutGameSaveHandler implements Handler {
     }
 
     public void sendGameName(DataOutputStream output) throws IOException {
+        _logger.info("Sending the game name " +game.getName() );
         output.writeUTF(game.getName());
         output.flush();
-        System.out.println("Sending game name");
     }
 
     public void sendPackets(DataOutputStream output) throws IOException {
-        System.out.println("Sending file");
+        _logger.info("Starting sending the packets (packet_size= " + SIZE_PACKET+")" );
         Files.sendFile(output,getTempFile(),SIZE_PACKET);
-        System.out.println(" file sent");
         output.flush();
-       //output.close();
+        _logger.info("The packets have been sent.");
     }
 
     @Override
     public void Stop() {
-        System.out.println("Closing putGameRequestHandler");
+        _logger.info("Finish Game Save saving, deleting the temporary file.");
         FileUtils.delete(getTempFile());
 
     }

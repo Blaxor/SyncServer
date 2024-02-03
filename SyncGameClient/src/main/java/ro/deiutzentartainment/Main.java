@@ -1,5 +1,7 @@
 package ro.deiutzentartainment;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ro.deiutzentartainment.config.ConfigConnection;
 import ro.deiutzentartainment.exceptions.gamefile.InvalidNameException;
 import ro.deiutzentartainment.games.GameHandler;
@@ -13,10 +15,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Main {
+
+    private static Logger _logger = LogManager.getLogger(Main.class.getName());
     public static void main(String[] args) {
 
         GameHandler gameHandler = new GameHandlerImpl(ConfigConnection.getInstance());
-
         GameManager games = GameManager.getInstance();
 
 
@@ -26,48 +29,48 @@ public class Main {
         while(!close) {
             String input = null;
             try {
-                System.out.println("Please input the next operation save or load, game.");
+                _logger.info("Please input the next operation save or load, game.");
                 input = reader.readLine().toLowerCase();
                 switch (input) {
 
                     case "save" -> {
 
-                        System.out.println("'game data', 'save data','all'");
+                        _logger.info("'game data', 'save data','all'");
 
                         input = reader.readLine().toLowerCase();
                         if(input.equalsIgnoreCase("game data")){
-                            System.out.println("Please share the game name: ");
+                            _logger.info("Please share the game name: ");
                             String gameName = reader.readLine().toLowerCase();
                             Game game = games.getGame(gameName);
                             if(game==null) {
-                                System.out.println("The game is not found, continue");
+                                _logger.info("The game is not found, continue");
                                 continue;
                             }else{
-                                System.out.println("Saving game...");
+                                _logger.info("Saving game...");
                                 gameHandler.saveGameData(game);
 
                             }
                         }else if(input.equalsIgnoreCase("all")){
-                            System.out.println("Please share the game name: ");
+                            _logger.info("Please share the game name: ");
                             String gameName = reader.readLine().toLowerCase();
                             Game game = games.getGame(gameName);
                             if (game == null) {
-                                System.out.println("Game not found.");
+                                _logger.info("Game not found.");
                             } else {
-                                System.out.println("Loading save data...");
+                                _logger.info("Loading save data...");
                                 gameHandler.saveGameSave(game);
-                                System.out.println("Loading game data...");
+                                _logger.info("Loading game data...");
                                 gameHandler.saveGameData(game);
                             }
                         }else{
-                            System.out.println("Please share the game name: ");
+                            _logger.info("Please share the game name: ");
                             String gameName = reader.readLine().toLowerCase();
                             Game game = games.getGame(gameName);
                             if(game==null) {
-                                System.out.println("The game is not found, continue");
+                                _logger.info("The game is not found, continue");
                                 continue;
                             }else{
-                                System.out.println("Saving game...");
+                                _logger.info("Saving game...");
                                 gameHandler.saveGameSave(game);
 
                             }
@@ -78,42 +81,42 @@ public class Main {
                         break;
                     }
                     case "load" -> {
-                        System.out.println("'game data', 'save data','all'");
+                        _logger.info("'game data', 'save data','all'");
 
                         input = reader.readLine().toLowerCase();
 
                             if (input.equalsIgnoreCase("game data")) {
-                                System.out.println("Please share the game name: ");
+                                _logger.info("Please share the game name: ");
                                 String gameName = reader.readLine().toLowerCase();
                                 Game game = games.getGame(gameName);
                                 if (game == null) {
-                                    System.out.println("Game not found.");
+                                    _logger.info("Game not found.");
                                 } else {
-                                    System.out.println("Loading game...");
+                                    _logger.info("Loading game...");
                                     gameHandler.loadGameData(game);
                                 }
                             } else if(input.equalsIgnoreCase("all")){
-                                System.out.println("Please share the game name: ");
+                                _logger.info("Please share the game name: ");
                                 String gameName = reader.readLine().toLowerCase();
                                 Game game = games.getGame(gameName);
                                 if (game == null) {
-                                    System.out.println("Game not found.");
+                                    _logger.info("Game not found.");
                                 } else {
-                                    System.out.println("Loading save data...");
+                                    _logger.info("Loading save data...");
                                     gameHandler.loadGameSave(game);
-                                    System.out.println("Loading game data...");
+                                    _logger.info("Loading game data...");
                                     gameHandler.loadGameData(game);
                                 }
 
 
                             }else{
-                                System.out.println("Please share the game name: ");
+                                _logger.info("Please share the game name: ");
                                 String gameName = reader.readLine().toLowerCase();
                                 Game game = games.getGame(gameName);
                                 if (game == null) {
-                                    System.out.println("Game not found.");
+                                    _logger.info("Game not found.");
                                 } else {
-                                    System.out.println("Loading game...");
+                                    _logger.info("Loading game...");
                                     gameHandler.loadGameSave(game);
                                 }
                             }
@@ -121,34 +124,34 @@ public class Main {
 
                     }
                         case "game" ->{
-                        System.out.println("Select add,remove,list or info");
+                        _logger.info("Select add,remove,list or info");
                             input = reader.readLine().toLowerCase();
 
                             switch (input){
                                 case "add"->{
-                                    System.out.println("Selected to add a game to the list, please follow the instructions:");
-                                    System.out.println("Game name");
+                                    _logger.info("Selected to add a game to the list, please follow the instructions:");
+                                    _logger.info("Game name");
                                     String gameName = reader.readLine().toLowerCase();
-                                    System.out.println("Save path");
+                                    _logger.info("Save path");
                                     String savePath = reader.readLine();
-                                    System.out.println("Game Path");
+                                    _logger.info("Game Path");
                                     String gamePath = reader.readLine();
                                     try {
                                         games.addGame(gameName, new GameImpl(gameName,savePath,gamePath));
                                     } catch (InvalidNameException e) {
-                                        System.out.println("Invalid name, please try again");
+                                        _logger.info("Invalid name, please try again");
                                         break;
                                     }
-                                    System.out.println("Game added : " + new GameImpl(gameName,savePath,gamePath));
+                                    _logger.info("Game added : " + new GameImpl(gameName,savePath,gamePath));
                                     break;
                                 }
                                 case "list"->{
-                                    System.out.println("The list of the games is: " +games.getGameList());
+                                    _logger.info("The list of the games is: " +games.getGameList());
                                 }
                                 case "info"->{
-                                    System.out.println("Select the game name: ");
+                                    _logger.info("Select the game name: ");
                                     String gameName = reader.readLine();
-                                    System.out.println("The game proprieties are: " +games.getInfo(gameName));
+                                    _logger.info("The game proprieties are: " +games.getInfo(gameName));
                                 }
 
                             }

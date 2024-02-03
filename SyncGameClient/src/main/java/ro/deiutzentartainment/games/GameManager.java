@@ -1,8 +1,8 @@
 package ro.deiutzentartainment.games;
 
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ro.deiutzblaxo.cloud.fileutils.ProgramDirectoryUtilities;
 import ro.deiutzentartainment.exceptions.gamefile.InvalidDataException;
 import ro.deiutzentartainment.exceptions.gamefile.InvalidNameException;
@@ -20,8 +20,7 @@ public class GameManager {
 
     private static  GameManager instance;
 
-    private static Logger _logger = LoggerFactory.getLogger(GameManager.class);
-
+    private static Logger _logger = LogManager.getLogger(GameManager.class);
     private static final String GAME_FILE_PATH = ProgramDirectoryUtilities.getProgramDirectory() + "/games.txt";
 
     private HashMap<String , Game> games = new HashMap<>();
@@ -108,7 +107,7 @@ public class GameManager {
             String dataPath = "";
             if(chunks.length >= 3)
                 dataPath = chunks[2];
-            _logger.debug("Adding the game following game: ");
+            _logger.debug("Adding the game following game: "+name.toLowerCase());
             games.put(name.toLowerCase(),new GameImpl(name,savePath,dataPath));
         }
 

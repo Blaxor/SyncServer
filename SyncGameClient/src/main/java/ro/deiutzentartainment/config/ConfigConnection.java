@@ -1,6 +1,8 @@
 package ro.deiutzentartainment.config;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ro.deiutzblaxo.cloud.fileutils.ProgramDirectoryUtilities;
 import ro.deiutzblaxo.cloud.yaml.YAMLFile;
 import ro.deiutzblaxo.cloud.yaml.YAMLFileImpl;
@@ -12,7 +14,7 @@ import java.io.IOException;
 public class ConfigConnection {
 
     private static ConfigConnection instance;
-
+    private static Logger _logger = LogManager.getLogger(ConfigConnection.class);
     public static ConfigConnection getInstance(){
         if(instance == null){
             instance = new ConfigConnection();
@@ -26,7 +28,7 @@ public class ConfigConnection {
         try {
             file.load();
         } catch (FileNotFoundException e) {
-            System.out.println("File not found: " + ConfigFiles.CONFIG_CONNECTION + ". Loading defaults.");
+            _logger.warn("File not found: " + ConfigFiles.CONFIG_CONNECTION + ". Loading defaults.");
             File _file = new File(ConfigFiles.CONFIG_CONNECTION.getPath());
 
             try {

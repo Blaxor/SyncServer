@@ -6,7 +6,7 @@
 
     <groupId>ro.deiutzentartainment</groupId>
     <artifactId>SyncGameClient</artifactId>
-    <version>1.2</version>
+    <version>1.2.0.1</version>
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -116,12 +116,18 @@
             <artifactId>gson</artifactId>
             <version>2.10.1</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.32</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.22.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.22.1</version>
+        </dependency>
+
     </dependencies>
 
 
