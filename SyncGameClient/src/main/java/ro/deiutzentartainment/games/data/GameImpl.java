@@ -55,7 +55,9 @@ public class GameImpl implements Game{
 
     private String replacePlaceholders(String string){
 
-        return string.replaceFirst("#OS_USER_NAME#",System.getenv("USERNAME"));
+        return string
+                .replaceAll("#GAME_NAME#",getName())
+                .replaceAll("#OS_USER_NAME#",System.getenv("USERNAME"));
 
     }
 

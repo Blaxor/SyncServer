@@ -1,4 +1,5 @@
-# #OS_USER_NAME# placeholder for the env value "USERNAME"
+# #OS_USER_NAME# - placeholder for the env value "USERNAME"
+# #GAME_NAME# - pleaceholder for the name of the game.
 # NAME;GAME_SAVE;GAME_DATA
 RimWorld;C:\Users\#OS_USER_NAME#\AppData\LocalLow\Ludeon Studios\RimWorld by Ludeon Studios;C:\Program Files (x86)\Steam\steamapps\common\RimWorld
 SpaceEngineers;C:\Users\#OS_USER_NAME#\AppData\Roaming\SpaceEngineers;C:\Program Files (x86)\Steam\steamapps\common\SpaceEngineers
