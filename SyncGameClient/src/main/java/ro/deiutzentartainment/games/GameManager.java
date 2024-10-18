@@ -14,6 +14,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class GameManager {
@@ -64,6 +65,9 @@ public class GameManager {
 
     public Game getGame(String name){
         return games.get(name.toLowerCase());
+    }
+    public List<Game> getAllGames(){
+        return games.values().stream().toList();
     }
 
 
