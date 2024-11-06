@@ -20,6 +20,12 @@
             <artifactId>SyncGameClient</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>ro.deiutzentartainment</groupId>
+            <artifactId>SyncGameClient</artifactId>
+            <version>1.2.1</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
 

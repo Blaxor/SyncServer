@@ -28,11 +28,12 @@ public class ConfigConnection {
         try {
             file.load();
         } catch (FileNotFoundException e) {
-            _logger.warn("File not found: " + ConfigFiles.CONFIG_CONNECTION + ". Loading defaults.");
-            File _file = new File(ConfigFiles.CONFIG_CONNECTION.getPath());
+            _logger.warn("File not found: " + ConfigFiles.CONFIG_CONNECTION + ". Creating default.");
+           File _file = new File(ConfigFiles.CONFIG_CONNECTION.getPath());
 
             try {
                 FileUtils.copyURLToFile(getClass().getClassLoader().getResource("config_connection.yaml"),_file);
+                file.load();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
